@@ -1,0 +1,12 @@
+[YYYYMMDD.HHMM] type: message
+
+# Types:
+# feat     → new feature
+# fix      → bug fix
+# refactor → code improvement
+# chore    → maintenance
+# docs     → documentation
+# test     → testing
+
+# Example:
+# [20260320.1200] feat: add event emitter
