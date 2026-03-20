@@ -1,3 +1,3 @@
-export type accountStatus =
+export type AccountStatus =
               | 'active'
               | 'closed'

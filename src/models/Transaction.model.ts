@@ -1,15 +1,15 @@
 import { ITransaction } from '../interfaces'
-import { transactionStatus, transactionType, TransactionConstructorOptions } from '../types'
+import { TransactionStatus, TransactionType, TransactionConstructorOptions } from '../types'
 
 export class Transaction implements ITransaction {
   readonly id: string
-  readonly type: transactionType;
+  readonly type: TransactionType;
   readonly description: string;
   readonly issuerAccountId?: string;
   readonly recipientAccountId?: string;
 
   protected amount: number;
-  protected status: transactionStatus;
+  protected status: TransactionStatus;
   protected createdAt: Date;
   protected completedAt?: Date;
 
@@ -35,7 +35,7 @@ export class Transaction implements ITransaction {
     return this.amount
   }
 
-  getStatus(): transactionStatus {
+  getStatus(): TransactionStatus {
     return this.status
   }
 

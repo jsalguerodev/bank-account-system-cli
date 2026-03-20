@@ -1,12 +1,12 @@
 import { IAccount } from '../interfaces'
-import { accountStatus } from '../types'
+import { AccountStatus } from '../types'
 
 export abstract class BaseAccount implements IAccount {
   readonly id: string
   readonly owner: string
   readonly type: 'checking' | 'savings' | 'investment'
 
-  protected status: accountStatus
+  protected status: AccountStatus
   protected balance: number
 
   constructor(id: string, owner: string, type: 'checking' | 'savings' | 'investment', initialDeposit: number = 0) {
@@ -21,7 +21,7 @@ export abstract class BaseAccount implements IAccount {
     return this.balance
   }
 
-  getStatus(): accountStatus {
+  getStatus(): AccountStatus {
     return this.status
   }
 

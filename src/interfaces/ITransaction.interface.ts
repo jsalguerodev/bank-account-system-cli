@@ -1,14 +1,14 @@
-import { transactionStatus, transactionType } from "../types"
+import { TransactionStatus, TransactionType } from "../types"
 
 export interface ITransaction {
   id: string
-  type: transactionType
+  type: TransactionType
   description: string
   issuerAccountId?: string
   recipientAccountId?: string
 
   getAmount(): number
-  getStatus(): transactionStatus
+  getStatus(): TransactionStatus
   getDates(): { createdAt: Date, completedAt?: Date }
   completeTransaction(): void
   failTransaction(): void

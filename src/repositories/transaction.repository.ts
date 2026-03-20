@@ -1,6 +1,6 @@
 import { ITransactionRespository } from "../interfaces";
 import { Transaction } from "../models";
-import { Result, transactionType } from "../types";
+import { Result, TransactionType } from "../types";
 
 export class InMemoryTransactionRepository implements ITransactionRespository{
   readonly transactions = new Map< string, Transaction >()
@@ -22,7 +22,7 @@ export class InMemoryTransactionRepository implements ITransactionRespository{
       .filter(v =>(v.issuerAccountId === accountId || v.recipientAccountId === accountId))
   }
 
-  getByAccountAndType(accountId: string, type: transactionType): Result<Transaction[]> {
+  getByAccountAndType(accountId: string, type: TransactionType): Result<Transaction[]> {
   let transactionsByAccountAndType: Transaction[] = [...this.transactions.values()]
     .filter(v =>(v.issuerAccountId === accountId || v.recipientAccountId === accountId) && v.type === type)
 

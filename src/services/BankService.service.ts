@@ -1,7 +1,7 @@
 import { createAccount as newAccount, createTransaction } from '../factories'
 import { IBankService, IAccountRepository, ITransactionRespository} from '../interfaces'
-import { Transaction } from '../models'
 import { delay } from '../plugins'
+import { BankEventEmmiter } from '../events'
 
 interface IBankServiceDeps {
   accountRepository : IAccountRepository
@@ -57,6 +57,7 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
       const transaction = createTransaction({type: 'deposit', amount: amount, recipientAccountId: accountId})
       transactionRepository.save(transaction)
 
+      await BankEventEmmiter.emit('depostit', transaction)
       return { success: true, data: transaction }
     },
 
@@ -85,6 +86,7 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
       const transaction = createTransaction({type: 'withdrawal', amount: amount, issuerAccountId: accountId})
       transactionRepository.save(transaction)
 
+      await BankEventEmmiter.emit('withdrawal', transaction)
       return { success: true, data: transaction }
     },
 
@@ -124,6 +126,8 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
 
         recipientAccount.deposit(amount)
         transaction.completeTransaction()
+
+        await BankEventEmmiter.emit('transferComplete', transaction)
 
         return { success: true, data: transaction}
       } catch(error) {

@@ -1,8 +1,8 @@
-import { transactionOptions } from '../types'
+import { TransactionOptions } from '../types'
 import { Transaction } from '../models'
 import { getNewId } from '../plugins'
 
-const buildDescription  =  (options: transactionOptions): string =>{
+const buildDescription  =  (options: TransactionOptions): string =>{
   switch (options.type){
     case 'deposit':
       return `Deposit of ${options.amount} to account ${options.recipientAccountId}`
@@ -13,5 +13,5 @@ const buildDescription  =  (options: transactionOptions): string =>{
   }
 }
 
-export const createTransaction = (options: transactionOptions):
+export const createTransaction = (options: TransactionOptions):
   Transaction => new Transaction(getNewId(), {...options, description: buildDescription(options)})

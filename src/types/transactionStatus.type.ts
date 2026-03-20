@@ -1,4 +1,4 @@
-export type transactionStatus =
+export type TransactionStatus =
               | 'completed'
               | 'failed'
               | 'pending'

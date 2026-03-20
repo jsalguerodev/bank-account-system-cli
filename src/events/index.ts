@@ -1,0 +1,1 @@
+export { BankEventEmmiter } from './BankEventEmitter.event'

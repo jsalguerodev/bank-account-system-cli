@@ -1,10 +1,10 @@
 import { Transaction } from "../models"
-import { Result, transactionType } from "../types"
+import { Result, TransactionType } from "../types"
 
 export interface ITransactionRespository {
   save(transaction: Transaction) : void
   getById(id: string): Result<Transaction>
   getByAccount(id: string): Transaction[]
-  getByAccountAndType(id: string, type: transactionType): Result<Transaction[]>
+  getByAccountAndType(id: string, type: TransactionType): Result<Transaction[]>
   getAll(): Result<Transaction[]>
 }
