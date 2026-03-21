@@ -17,7 +17,7 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
         return { success: true, data: account }
 
       }catch (error) {
-        return { success: false, error: 'Invalid account type' }
+        return { success: false, error: error instanceof Error ? error.message : 'Could not create account' }
       }
     },
 

@@ -2,14 +2,18 @@ import { BaseAccount } from './BaseAccount.model'
 
 export class SavingsAccount extends BaseAccount {
 
-  private readonly minimumBalance: number = 15
+  #minimumBalance: number = 15
 
   constructor(id: string, owner: string, initialDeposit: number) {
     super(id, owner, 'savings', initialDeposit)
+
+    if (this.balance < this.#minimumBalance) {
+      throw new Error(`Initial deposit must be at least ${this.#minimumBalance}`)
+    }
   }
 
   canWithdraw(amount: number): boolean {
-    return this.balance - amount > this.minimumBalance
+    return this.balance - amount >= this.#minimumBalance
   }
 
   canTransfer(amount: number): boolean {
