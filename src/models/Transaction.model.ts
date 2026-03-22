@@ -29,6 +29,20 @@ export class Transaction implements ITransaction {
     if (this.status === 'completed') {
       this.completedAt = this.createdAt
     }
+
+    switch (options.type) {
+      case ('deposit'):
+        this.recipientAccountId = options.recipientAccountId
+        break
+      case ('withdrawal'):
+        this.issuerAccountId = options.issuerAccountId
+        break
+      case ('transfer'):
+        this.issuerAccountId = options.issuerAccountId
+        this.recipientAccountId = options.recipientAccountId
+        break
+    }
+
   }
 
   getAmount(): number {
@@ -39,16 +53,13 @@ export class Transaction implements ITransaction {
     return this.status
   }
 
-  getDates(): Readonly <{ createdAt: Date; completedAt?: Date }> {
-
+  getDates(): Readonly<{ createdAt: Date; completedAt?: Date }> {
     const timestamps: { createdAt: Date; completedAt?: Date } = {
       createdAt: this.createdAt
     }
-
-    if (this.type === 'transfer' && this.completedAt) {
+    if (this.completedAt) {
       timestamps.completedAt = this.completedAt
     }
-
     return timestamps
   }
 
