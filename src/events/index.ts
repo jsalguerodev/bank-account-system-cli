@@ -1,1 +1,1 @@
-export { BankEventEmmiter } from './BankEventEmitter.event'
+export { BankEventEmitter } from './BankEventEmitter.event'

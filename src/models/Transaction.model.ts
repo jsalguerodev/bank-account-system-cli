@@ -8,10 +8,10 @@ export class Transaction implements ITransaction {
   readonly issuerAccountId?: string;
   readonly recipientAccountId?: string;
 
-  protected amount: number;
-  protected status: TransactionStatus;
-  protected createdAt: Date;
-  protected completedAt?: Date;
+  #amount: number;
+  #status: TransactionStatus;
+  #createdAt: Date;
+  #completedAt?: Date;
 
   constructor(id: string, options: TransactionConstructorOptions) {
 
@@ -21,13 +21,13 @@ export class Transaction implements ITransaction {
 
     this.id = id
     this.type = options.type
-    this.status = (options.type === 'deposit' || options.type === 'withdrawal') ? 'completed' : 'pending'
-    this.amount = options.amount
-    this.createdAt = new Date()
+    this.#status = (options.type === 'deposit' || options.type === 'withdrawal') ? 'completed' : 'pending'
+    this.#amount = options.amount
+    this.#createdAt = new Date()
     this.description = options.description
 
-    if (this.status === 'completed') {
-      this.completedAt = this.createdAt
+    if (this.#status === 'completed') {
+      this.#completedAt = this.#createdAt
     }
 
     switch (options.type) {
@@ -42,41 +42,40 @@ export class Transaction implements ITransaction {
         this.recipientAccountId = options.recipientAccountId
         break
     }
-
   }
 
   getAmount(): number {
-    return this.amount
+    return this.#amount
   }
 
   getStatus(): TransactionStatus {
-    return this.status
+    return this.#status
   }
 
   getDates(): Readonly<{ createdAt: Date; completedAt?: Date }> {
     const timestamps: { createdAt: Date; completedAt?: Date } = {
-      createdAt: this.createdAt
+      createdAt: this.#createdAt
     }
-    if (this.completedAt) {
-      timestamps.completedAt = this.completedAt
+    if (this.#completedAt) {
+      timestamps.completedAt = this.#completedAt
     }
     return timestamps
   }
 
   completeTransaction(): void {
-    if (this.status !== 'pending') {
+    if (this.#status !== 'pending') {
       throw new Error('Only pending transactions can be completed')
     }
 
-    this.status = 'completed'
-    this.completedAt = new Date()
+    this.#status = 'completed'
+    this.#completedAt = new Date()
   }
 
   failTransaction(): void {
-    if (this.status !== 'pending') {
+    if (this.#status !== 'pending') {
       throw new Error('Only pending transactions can be failed')
     }
-    this.status = 'failed'
-    this.completedAt = new Date()
+    this.#status = 'failed'
+    this.#completedAt = new Date()
   }
 }

@@ -2,3 +2,5 @@ node_modules/
 dist/
 
 bank-account-exercise.md
+combined.log
+error.log

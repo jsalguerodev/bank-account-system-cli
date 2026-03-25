@@ -1,7 +1,9 @@
-import { Transaction } from '../models'
+import { BaseAccount, Transaction } from '../models'
 
 export type BankEventMap = {
-  depostit: Transaction
+  deposit: Transaction
+  accountCreation: BaseAccount
   withdrawal: Transaction
-  transferComplete: Transaction
+  transferCompleted: Transaction
+  transferFailed: Transaction
 }

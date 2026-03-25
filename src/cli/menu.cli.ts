@@ -2,7 +2,7 @@ import { cliAsk } from '../plugins'
 
 export type MenuOption = {
   label: string
-  action: () => Promise < void | MenuResult>
+  action: () => Promise < void | MenuResult >
 }
 
 export enum MenuResult {

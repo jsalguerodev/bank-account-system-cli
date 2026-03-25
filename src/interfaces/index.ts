@@ -1,5 +1,6 @@
 export type { ITransaction } from './ITransaction.interface'
-export type { ITransactionRespository } from './ITransactionRespository.interface'
+export type { ITransactionRespository } from './ITransactionRepository.interface'
 export type { IAccount } from './IAccount.interface'
 export type { IAccountRepository } from './IAccountRepository.interface'
-export type { IBankService } from './IBankService.iterface'
+export type { IBankService } from './IBankService.interface'
+export type { ILogger } from './ILogger.interface'

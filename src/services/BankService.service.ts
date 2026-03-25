@@ -1,12 +1,16 @@
-import { createAccount as newAccount, createTransaction } from '../factories'
+import { createAccount as newAccount, createTransaction, createLogger } from '../factories'
 import { IBankService, IAccountRepository, ITransactionRespository} from '../interfaces'
 import { delay } from '../plugins'
-import { BankEventEmmiter } from '../events'
+import { BankEventEmitter } from '../events'
+import { initListeners } from '../cli'
 
 interface IBankServiceDeps {
   accountRepository : IAccountRepository
   transactionRepository : ITransactionRespository
 }
+
+const logger = createLogger('BankService')
+initListeners(logger)
 
 export const BankService = ({ accountRepository, transactionRepository } : IBankServiceDeps): IBankService => {
   return{
@@ -14,6 +18,7 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
       try {
         const account = newAccount(owner, type, initialDeposit)
         accountRepository.save(account)
+        BankEventEmitter.emit('accountCreation', account)
         return { success: true, data: account }
 
       }catch (error) {
@@ -37,8 +42,24 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
       return {success: true, data: result.data.getBalance() }
     },
 
+    getAllAccounts() {
+      const result = accountRepository.getAll()
+
+      if (!result.success) return result
+
+      return { success: true, data: result.data}
+    },
+
+    getAllTransactions() {
+      const result = transactionRepository.getAll()
+
+      if (!result.success) return result
+
+      return { success: true, data: result.data}
+    },
+
     async deposit(accountId, amount){
-      if(amount <= 0) return {success: false, error: 'The amount should be greater that 0. Please try again.'}
+      if(amount <= 0) return {success: false, error: 'The amount should be greater than 0. Please try again.'}
 
       const result = accountRepository.getById(accountId)
       if(!result.success) return result
@@ -47,7 +68,7 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
 
       if (account.getStatus() === 'closed') return {
         success: false,
-        error: 'The account is closed. You cannot make a deposit a closed account.'
+        error: 'The account is closed. You cannot make a deposit to a closed account.'
       }
 
       await delay(1000)
@@ -57,12 +78,12 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
       const transaction = createTransaction({type: 'deposit', amount: amount, recipientAccountId: accountId})
       transactionRepository.save(transaction)
 
-      await BankEventEmmiter.emit('depostit', transaction)
+      await BankEventEmitter.emit('deposit', transaction)
       return { success: true, data: transaction }
     },
 
     async withdraw(accountId, amount) {
-      if (amount <= 0) return {success: false, error: 'The amount should be greater that 0. Please try again'}
+      if (amount <= 0) return {success: false, error: 'The amount should be greater than 0. Please try again'}
 
       const result = accountRepository.getById(accountId)
       if (!result.success) return result
@@ -76,7 +97,7 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
 
       if (!account.canWithdraw(amount)) return {
         success: false,
-        error: 'You cannot withdraw that amount at this moment. Please check you balace and try again'
+        error: 'You cannot withdraw that amount at this moment. Please check your balance and try again'
       }
 
       await delay( 1000 )
@@ -86,12 +107,12 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
       const transaction = createTransaction({type: 'withdrawal', amount: amount, issuerAccountId: accountId})
       transactionRepository.save(transaction)
 
-      await BankEventEmmiter.emit('withdrawal', transaction)
+      await BankEventEmitter.emit('withdrawal', transaction)
       return { success: true, data: transaction }
     },
 
     async transfer(issuerAccountId, recipientAccountId, amount) {
-      if(amount <= 0) return {success: false, error: 'The amount should be greater that 0. Please try again'}
+      if(amount <= 0) return {success: false, error: 'The amount should be greater than 0. Please try again'}
 
       const issuerResult = accountRepository.getById(issuerAccountId)
       if(!issuerResult.success) return issuerResult
@@ -114,7 +135,7 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
 
       if (!issuerAccount.canTransfer(amount)) return {
         success: false,
-        error: 'You cannot withdraw that amount at this moment. Please check you balace and try again'
+        error: 'You cannot withdraw that amount at this moment. Please check your balance and try again'
       }
 
       const transaction = createTransaction({ type: 'transfer', amount, issuerAccountId, recipientAccountId})
@@ -127,13 +148,14 @@ export const BankService = ({ accountRepository, transactionRepository } : IBank
         recipientAccount.deposit(amount)
         transaction.completeTransaction()
 
-        await BankEventEmmiter.emit('transferComplete', transaction)
+        await BankEventEmitter.emit('transferCompleted', transaction)
 
         return { success: true, data: transaction}
       } catch(error) {
         issuerAccount.deposit(amount)
         transaction.failTransaction()
 
+        await BankEventEmitter.emit('transferFailed', transaction)
         return { success: false, error: 'Transaction failed. Please try again later'}
       }
 

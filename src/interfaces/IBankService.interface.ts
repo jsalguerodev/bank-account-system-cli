@@ -8,5 +8,7 @@ export interface IBankService {
   withdraw(accountId: string, amount: number): Promise< Result<Transaction> >
   transfer(issuerAccountId: string, recipientAccountId: string, amount: number): Promise < Result<Transaction> >
   getStatement(accountId: string): Result<Transaction[]>
-  getBalance(accountId: string): Result<number>;
+  getBalance(accountId: string): Result<number>
+  getAllAccounts(): Result<BaseAccount[]>
+  getAllTransactions(): Result<Transaction[]>
 }
